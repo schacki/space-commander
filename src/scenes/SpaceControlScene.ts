@@ -1,7 +1,10 @@
 import Phaser from 'phaser'
 import Plane from '../objects/Plane';
+
+
 export default class SpaceControlScene extends Phaser.Scene
 {
+    planes: Array<Plane> = []
 	constructor()
 	{
 		super('space-control')
@@ -18,21 +21,46 @@ export default class SpaceControlScene extends Phaser.Scene
     create()
     {
         this.add.image(400, 300, 'sky')
-        const plan = new Plane(this, 200, 150);
-        // const particles = this.add.particles('red')
 
-        // const emitter = particles.createEmitter({
-        //     speed: 100,
-        //     scale: { start: 1, end: 0 },
-        //     blendMode: 'ADD'
-        // })
+        for (let i=0; i<5; i++) {
+            setTimeout(() => this.addPlane(), i*2000)
+        }
 
-        // const logo = this.physics.add.image(400, 100, 'logo')
 
-        // logo.setVelocity(100, 200)
-        // logo.setBounce(1, 1)
-        // logo.setCollideWorldBounds(true)
-
-        // emitter.startFollow(logo)
     }
+
+    addPlane() {
+        const zufallszahl = Math.random()
+        let x, y;
+        if (zufallszahl < 0.25 ) {
+            x = 0
+            y = Math.random() * 600
+        }
+        else if (zufallszahl < 0.5){
+            x = Math.random() * 800
+            y = 0
+        }
+        else if (zufallszahl < 0.75){
+            x = 800
+            y = Math.random() * 600
+        }
+        else {
+            x = Math.random() * 800
+            y =  600
+        }
+
+        this.planes.push(new Plane(this, x ,y ))
+        this.physics.add.overlap(this.planes, this.planes, this.oncrash, undefined, this)        
+    }
+
+    oncrash(crashplane1, crashplane2)
+	{
+        this.add.text(50, 60, 'Game Over')
+        this.planes.forEach(
+            (p: Plane) => {
+                p.setVelocity(0,0);
+            }
+        )
+	}
+       
 }

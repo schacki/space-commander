@@ -12,13 +12,6 @@ interface RotatingPoint {
 
 type Points = Array<Point>;
 
-enum FollowingPlaneState {
-    UNDEFINED = 'undefined',
-    INIT_PATH = 'init_path',
-    FOLLOWING_PATH = 'following_path',
-}
-
-
 
 enum PlaneState {
     FIXED = 'fixed',
@@ -108,9 +101,6 @@ export default class Plane extends Phaser.Physics.Arcade.Sprite {
     }
 
     startFollow() {
-        if (!this.path) {
-            throw Error('No path defined to draw!');
-        }
 
         if (this.state !== PlaneState.FOLLOWING_PATH) {
             this.state = PlaneState.FOLLOWING_PATH;
