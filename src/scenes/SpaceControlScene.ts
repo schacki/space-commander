@@ -1,10 +1,14 @@
 import Phaser from 'phaser'
-import Plane from '../objects/Plane';
+import Plane from '../objects/Plane'
+
+
+
 
 
 export default class SpaceControlScene extends Phaser.Scene
 {
     planes: Array<Plane> = []
+    gameOver: boolean = false
 	constructor()
 	{
 		super('space-control')
@@ -16,11 +20,20 @@ export default class SpaceControlScene extends Phaser.Scene
         this.load.image('logo', 'http://labs.phaser.io/assets/sprites/phaser3-logo.png')
         this.load.image('red', 'http://labs.phaser.io/assets/particles/red.png');
         this.load.image('arrow', 'assets/arrow.png')
+        this.load.image('landebahn', 'assets/landebahn.png')
+        this.load.image('strich', 'assets/strich.png')
     }
 
     create()
     {
         this.add.image(400, 300, 'sky')
+       const landebahn = this.add.image(500, 200, 'landebahn');
+       landebahn.setScale(0.25)
+       const strich = this.add.image(500, 240, 'strich')
+       strich.setScale(0.2)
+
+        
+         
 
         for (let i=0; i<5; i++) {
             setTimeout(() => this.addPlane(), i*2000)
@@ -59,8 +72,13 @@ export default class SpaceControlScene extends Phaser.Scene
         this.planes.forEach(
             (p: Plane) => {
                 p.setVelocity(0,0);
+                
             }
         )
-	}
+        this.physics.pause();
+
+        this.gameOver = true
+    }
+ 
        
 }
