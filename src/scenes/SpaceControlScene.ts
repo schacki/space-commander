@@ -29,9 +29,9 @@ export default class SpaceControlScene extends Phaser.Scene
         this.add.image(400, 300, 'sky')
        const landebahn = this.add.image(500, 200, 'landebahn');
        landebahn.setScale(0.25)
-       const strich = this.add.image(500, 240, 'strich')
+       const strich = this.add.sprite(500, 240, 'strich')
        strich.setScale(0.2)
-
+       this.physics.add.overlap(strich, this.planes, this.landingPlane, undefined, this)
         
          
 
@@ -40,6 +40,19 @@ export default class SpaceControlScene extends Phaser.Scene
         }
 
 
+    }
+
+    landingPlane(strich, landingPlane){
+        this.add.text(50, 60, 'Game Over')
+        this.planes.forEach(
+            (p: Plane) => {
+                p.setVelocity(0,0);
+                
+            }
+        )
+        this.physics.pause();
+
+        this.gameOver = true
     }
 
     addPlane() {
