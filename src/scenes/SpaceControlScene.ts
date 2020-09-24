@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import Plane from '../objects/Plane'
+import ScoreLabel from '../objects/ScoreLabel'
 
 
 
@@ -8,6 +9,7 @@ import Plane from '../objects/Plane'
 export default class SpaceControlScene extends Phaser.Scene
 {
     planes: Array<Plane> = []
+    strich: Phaser.GameObjects.Sprite
     gameOver: boolean = false
 	constructor()
 	{
@@ -29,11 +31,10 @@ export default class SpaceControlScene extends Phaser.Scene
         this.add.image(400, 300, 'sky')
        const landebahn = this.add.image(500, 200, 'landebahn');
        landebahn.setScale(0.25)
-       const strich = this.add.sprite(500, 240, 'strich')
-       strich.setScale(0.2)
-       this.physics.add.overlap(strich, this.planes, this.landingPlane, undefined, this)
+       this.strich = this.physics.add.sprite(500, 240, 'strich')
+       this.strich.setScale(0.2)
         
-         
+       this.scoreLabel = this.createScoreLabel(16, 16, 0) 
 
         for (let i=0; i<5; i++) {
             setTimeout(() => this.addPlane(), i*2000)
@@ -42,17 +43,9 @@ export default class SpaceControlScene extends Phaser.Scene
 
     }
 
-    landingPlane(strich, landingPlane){
-        this.add.text(50, 60, 'Game Over')
-        this.planes.forEach(
-            (p: Plane) => {
-                p.setVelocity(0,0);
-                
-            }
-        )
-        this.physics.pause();
-
-        this.gameOver = true
+    onLanding(strich, landingPlane: Phaser.Physics.Arcade.Sprite){
+        landingPlane.disableBody(true, true)
+        this.scoreLabel.add(10)
     }
 
     addPlane() {
@@ -76,7 +69,8 @@ export default class SpaceControlScene extends Phaser.Scene
         }
 
         this.planes.push(new Plane(this, x ,y ))
-        this.physics.add.overlap(this.planes, this.planes, this.oncrash, undefined, this)        
+        this.physics.add.overlap(this.planes, this.planes, this.oncrash, undefined, this)      
+        this.physics.add.overlap(this.strich, this.planes, this.onLanding, undefined, this)  
     }
 
     oncrash(crashplane1, crashplane2)
@@ -93,5 +87,13 @@ export default class SpaceControlScene extends Phaser.Scene
         this.gameOver = true
     }
  
-       
+    createScoreLabel(x, y, score)
+	{
+		const style = { fontSize: '32px', fill: '#000' }
+		const label = new ScoreLabel(this, x, y, score, style)
+
+		this.add.existing(label)
+
+		return label
+	}   
 }
